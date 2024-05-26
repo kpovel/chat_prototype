@@ -1,0 +1,3 @@
+(library
+ (name chat_prototype)
+ (libraries stdio dream dream-html lwt))

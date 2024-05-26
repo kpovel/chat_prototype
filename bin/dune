@@ -1,0 +1,4 @@
+(executable
+ (public_name chat_prototype)
+ (name main)
+ (libraries chat_prototype stdio dream dream-html lwt))
