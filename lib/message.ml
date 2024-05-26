@@ -1,3 +1,4 @@
+open Base
 open Lwt.Syntax
 module T = Caqti_type
 
@@ -12,11 +13,27 @@ let add_message req ~message =
 ;;
 
 let message req =
-  let open Lwt.Syntax in
   let* form = Dream.form ~csrf:false req in
   match form with
   | `Ok [ ("message", message) ] ->
     let* _ = add_message req ~message in
     Stdlib.Printf.sprintf "<div>%s</div>" message |> Dream.html
+  | _ -> Dream.empty `Bad_Request
+;;
+
+let message_range req =
+  match Dream.query req "start", Dream.query req "end" with
+  | Some startp, Some endp ->
+    let startp = Int.of_string startp in
+    let endp = Int.of_string endp in
+    let rec until startp endp =
+      match startp <= endp with
+      | true ->
+        let* _ = add_message req ~message:(Int.to_string startp) in
+        until (startp + 1) endp
+      | false -> Lwt.return ()
+    in
+    let* _ = until startp endp in
+    Dream.empty `OK
   | _ -> Dream.empty `Bad_Request
 ;;

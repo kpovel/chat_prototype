@@ -39,7 +39,7 @@ let index_page req =
                [ class_ "bg-gray-200 p-2" ]
                [ h2 [ class_ "text-2xl" ] [ txt "chat name" ] ]
            ; section
-               [ class_ "grow m-2 border bg-pink-200"; id "chat" ]
+               [ class_ "grow m-2 border bg-pink-200 overflow-scroll"; id "chat" ]
                (List.map messages ~f:(fun (_id, content, _sent_at) -> message ~m:content))
            ; section
                [ class_ "m-2" ]
