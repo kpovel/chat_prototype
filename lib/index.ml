@@ -30,8 +30,8 @@ let index_page req =
            []
            [ meta [ charset "UTF-8" ]
            ; meta [ name "viewport"; content "width=device-width, initial-scale=1.0" ]
-           ; script [ src "https://unpkg.com/htmx.org@1.9.12" ] ""
            ; script [ src "https://cdn.tailwindcss.com" ] ""
+           ; script [ src "/js/index.js"; defer ] ""
            ]
        ; main
            [ class_ "flex flex-col h-dvh" ]
@@ -48,11 +48,7 @@ let index_page req =
            ; section
                [ class_ "m-2" ]
                [ form
-                   [ Hx.post "/message"
-                   ; Hx.target "#chat"
-                   ; Hx.swap "afterbegin"
-                   ; Hx.on_ ~event:":after-request" "this.reset()"
-                   ]
+                   [ id "form" ]
                    [ input
                        [ class_ "border-2 border-gray-800 rounded w-full"
                        ; placeholder "Type a message"
