@@ -17,7 +17,7 @@ let message req =
   match form with
   | `Ok [ ("message", message) ] ->
     let* _ = add_message req ~message in
-    Stdlib.Printf.sprintf "<div>%s</div>" message |> Dream.html
+    Index.message ~m:message |> Dream_html.respond
   | _ -> Dream.empty `Bad_Request
 ;;
 

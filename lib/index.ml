@@ -39,14 +39,18 @@ let index_page req =
                [ class_ "bg-gray-200 p-2" ]
                [ h2 [ class_ "text-2xl" ] [ txt "chat name" ] ]
            ; section
-               [ class_ "grow m-2 border bg-pink-200 overflow-scroll"; id "chat" ]
-               (List.map messages ~f:(fun (_id, content, _sent_at) -> message ~m:content))
+               [ class_
+                   "grow m-2 border bg-pink-200 overflow-scroll flex flex-col-reverse"
+               ; id "chat"
+               ]
+               (List.map messages ~f:(fun (_id, content, _sent_at) -> message ~m:content)
+                |> List.rev)
            ; section
                [ class_ "m-2" ]
                [ form
                    [ Hx.post "/message"
                    ; Hx.target "#chat"
-                   ; Hx.swap "beforeend"
+                   ; Hx.swap "afterbegin"
                    ; Hx.on_ ~event:":after-request" "this.reset()"
                    ]
                    [ input
