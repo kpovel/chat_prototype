@@ -22,6 +22,35 @@ let send_message req =
   | _ -> Dream.empty `Bad_Request
 ;;
 
+let message_pagination_query req ~id =
+  let query =
+    let open Caqti_request.Infix in
+    (T.int ->* T.(tup3 int string string))
+      "select id, content, sent_at\n\
+       from message\n\
+       where id < $1\n\
+       order by id desc\n\
+       limit 20;"
+  in
+  Dream.sql req (fun (module Db) ->
+    let* messages = Db.collect_list query id in
+    Caqti_lwt.or_fail messages)
+;;
+
+let message_pagination req =
+  let query = Dream.query req "id" in
+  match query with
+  | None -> Dream.empty `Bad_Request
+  | Some id ->
+    let id = Int.of_string id in
+    let* messages = message_pagination_query req ~id in
+    let open Dream_html in
+    let open HTML in
+    List.map messages ~f:(fun (id, content, _sent_at) -> Index.message ~m:content ~id)
+    |> null
+    |> Dream_html.respond
+;;
+
 let message_range req =
   match Dream.query req "start", Dream.query req "end" with
   | Some startp, Some endp ->

@@ -8,7 +8,8 @@ let () =
   @@ Dream.router
        [ Dream.get "/" (fun req -> Index.index_page req >>= Dream_html.respond)
        ; Dream.post "/message" (fun req -> Message.send_message req)
+       ; Dream.get "/message-pagination" (fun req -> Message.message_pagination req)
        ; Dream.get "/message-range" (fun req -> Message.message_range req)
-       ; Dream.get "/js/**" @@ Dream.static "js";
+       ; Dream.get "/js/**" @@ Dream.static "js"
        ]
 ;;

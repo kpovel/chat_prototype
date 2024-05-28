@@ -6,6 +6,22 @@ function lastMessageId() {
   return lastMessage.id;
 }
 
+function isScrolledToTop() {
+  return -chat.scrollTop === chat.scrollHeight - chat.clientHeight;
+}
+
+chat.addEventListener("scroll", async (_) => {
+  if (isScrolledToTop()) {
+    const res = await fetch(`/message-pagination?id=${lastMessageId()}`);
+    if (res.status !== 200) {
+      return;
+    }
+
+    const text = await res.text();
+    chat.insertAdjacentHTML("beforeend", text);
+  }
+});
+
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const data = new FormData(e.target);
