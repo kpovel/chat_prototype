@@ -5,17 +5,18 @@ module T = Caqti_type
 let messages req =
   let query =
     let open Caqti_request.Infix in
-    (T.unit ->* T.(tup3 int string string)) "select id, content, sent_at from message;"
+    (T.unit ->* T.(tup3 int string string))
+      "select id, content, sent_at from message order by id desc limit 20;"
   in
   Dream.sql req (fun (module Db) ->
     let* messages = Db.collect_list query () in
     Caqti_lwt.or_fail messages)
 ;;
 
-let message ~m =
+let message ~m ~id:idv =
   let open Dream_html in
   let open HTML in
-  div [] [ txt "%s" m ]
+  div [ class_ "p-2 border border-purple-500 rounded"; id "%d" idv ] [ txt "%s" m ]
 ;;
 
 let index_page req =
@@ -43,14 +44,15 @@ let index_page req =
                    "grow m-2 border bg-pink-200 overflow-scroll flex flex-col-reverse"
                ; id "chat"
                ]
-               (List.map messages ~f:(fun (_id, content, _sent_at) -> message ~m:content)
-                |> List.rev)
+               (List.map messages ~f:(fun (id, content, _sent_at) ->
+                  message ~m:content ~id))
            ; section
                [ class_ "m-2" ]
                [ form
                    [ id "form" ]
                    [ input
                        [ class_ "border-2 border-gray-800 rounded w-full"
+                       ; autofocus
                        ; placeholder "Type a message"
                        ; name "message"
                        ]

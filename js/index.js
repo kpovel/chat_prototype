@@ -1,6 +1,11 @@
 const form = document.getElementById("form");
 const chat = document.getElementById("chat");
 
+function lastMessageId() {
+  const lastMessage = chat.lastElementChild;
+  return lastMessage.id;
+}
+
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const data = new FormData(e.target);
